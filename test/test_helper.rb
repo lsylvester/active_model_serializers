@@ -23,6 +23,7 @@ require 'fixtures/poro'
 module TestHelper
   Routes = ActionDispatch::Routing::RouteSet.new
   Routes.draw do
+    get 'foo/:id', to: 'application#index', as: 'post_author'
     get ':controller(/:action(/:id))'
     get ':controller(/:action)'
   end

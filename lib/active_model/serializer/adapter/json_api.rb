@@ -138,21 +138,37 @@ module ActiveModel
           end
         end
 
+        def url_helper
+          @url_helper ||= Class.new do
+            # include Rails.application.routes.mounted_helpers
+            include TestHelper::Routes.url_helpers
+            include ActionDispatch::Routing::UrlFor
+
+            def default_url_options
+              {host: 'http://example.com'}
+            end
+          end.new
+        end
+
         def add_resource_links(attrs, serializer, options = {})
           options[:add_linked] = options.fetch(:add_linked, true)
 
           serializer.each_association do |name, association, opts|
             attrs[:links] ||= {}
 
-            if association.respond_to?(:each)
-              add_links(attrs, name, association)
+            if opts[:url]
+              attrs[:links][name] = url_helper.url_for([serializer.object, name])
             else
-              add_link(attrs, name, association)
-            end
+              if association.respond_to?(:each)
+                add_links(attrs, name, association)
+              else
+                add_link(attrs, name, association)
+              end
 
-            if @options[:embed] != :ids && options[:add_linked]
-              Array(association).each do |association|
-                add_linked(name, association)
+              if @options[:embed] != :ids && options[:add_linked]
+                Array(association).each do |association|
+                  add_linked(name, association)
+                end
               end
             end
           end

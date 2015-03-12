@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 gemspec
 
 gem "minitest"
-
+gem 'pry'
 version = ENV["RAILS_VERSION"] || "4.1"
 
 if version == "master"

@@ -1,4 +1,5 @@
 class Model
+  extend ActiveModel::Naming
   def initialize(hash={})
     @attributes = hash
   end
@@ -24,7 +25,7 @@ class Model
   end
 
   def to_param
-    id
+    id.to_s
   end
 
   def method_missing(meth, *args)
@@ -164,7 +165,7 @@ PostPreviewSerializer = Class.new(ActiveModel::Serializer) do
   attributes :title, :body, :id
 
   has_many :comments, serializer: CommentPreviewSerializer
-  belongs_to :author, serializer: AuthorPreviewSerializer
+  belongs_to :author, url: true, serializer: AuthorPreviewSerializer
 end
 
 Spam::UnrelatedLinkSerializer = Class.new(ActiveModel::Serializer) do
